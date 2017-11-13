@@ -1,0 +1,630 @@
+   0  $accept : %entry% $end
+
+   1  terminated_expr : expr EOF
+
+   2  expr : INT
+   3       | VAR
+   4       | STRING
+   5       | expr COMMA expr
+   6       | VAR LPAR expr COMMA RPAR
+   7       | VAR LPAR expr RPAR
+   8       | LPAR expr RPAR
+   9       | LET VAR EQUALS expr IN expr
+  10       | expr BIN_PLUS expr
+  11       | expr BIN_MULT expr
+  12       | BIN_PLUS expr
+  13       | expr BIN_CMP expr
+  14       | expr EQUALS expr
+  15       | expr AND expr
+  16       | expr OR expr
+  17       | NOT expr
+
+  18  %entry% : '\001' terminated_expr
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . terminated_expr  (18)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	terminated_expr  goto 10
+	expr  goto 11
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	expr : VAR .  (3)
+	expr : VAR . LPAR expr COMMA RPAR  (6)
+	expr : VAR . LPAR expr RPAR  (7)
+
+	LPAR  shift 12
+	EOF  reduce 3
+	BIN_MULT  reduce 3
+	BIN_PLUS  reduce 3
+	BIN_CMP  reduce 3
+	EQUALS  reduce 3
+	COMMA  reduce 3
+	AND  reduce 3
+	OR  reduce 3
+	IN  reduce 3
+	RPAR  reduce 3
+
+
+state 4
+	expr : STRING .  (4)
+
+	.  reduce 4
+
+
+state 5
+	expr : INT .  (2)
+
+	.  reduce 2
+
+
+state 6
+	expr : BIN_PLUS . expr  (12)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 13
+
+
+state 7
+	expr : NOT . expr  (17)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 14
+
+
+state 8
+	expr : LET . VAR EQUALS expr IN expr  (9)
+
+	VAR  shift 15
+	.  error
+
+
+state 9
+	expr : LPAR . expr RPAR  (8)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 16
+
+
+state 10
+	%entry% : '\001' terminated_expr .  (18)
+
+	.  reduce 18
+
+
+state 11
+	terminated_expr : expr . EOF  (1)
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	EOF  shift 17
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	COMMA  shift 22
+	AND  shift 23
+	OR  shift 24
+	.  error
+
+
+state 12
+	expr : VAR LPAR . expr COMMA RPAR  (6)
+	expr : VAR LPAR . expr RPAR  (7)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 25
+
+
+state 13
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : BIN_PLUS expr .  (12)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	.  reduce 12
+
+
+state 14
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+	expr : NOT expr .  (17)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	EOF  reduce 17
+	COMMA  reduce 17
+	AND  reduce 17
+	OR  reduce 17
+	IN  reduce 17
+	RPAR  reduce 17
+
+
+state 15
+	expr : LET VAR . EQUALS expr IN expr  (9)
+
+	EQUALS  shift 26
+	.  error
+
+
+state 16
+	expr : expr . COMMA expr  (5)
+	expr : LPAR expr . RPAR  (8)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	COMMA  shift 22
+	AND  shift 23
+	OR  shift 24
+	RPAR  shift 27
+	.  error
+
+
+state 17
+	terminated_expr : expr EOF .  (1)
+
+	.  reduce 1
+
+
+state 18
+	expr : expr BIN_MULT . expr  (11)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 28
+
+
+state 19
+	expr : expr BIN_PLUS . expr  (10)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 29
+
+
+state 20
+	expr : expr BIN_CMP . expr  (13)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 30
+
+
+state 21
+	expr : expr EQUALS . expr  (14)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 31
+
+
+state 22
+	expr : expr COMMA . expr  (5)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 32
+
+
+state 23
+	expr : expr AND . expr  (15)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 33
+
+
+state 24
+	expr : expr OR . expr  (16)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 34
+
+
+state 25
+	expr : expr . COMMA expr  (5)
+	expr : VAR LPAR expr . COMMA RPAR  (6)
+	expr : VAR LPAR expr . RPAR  (7)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	COMMA  shift 35
+	AND  shift 23
+	OR  shift 24
+	RPAR  shift 36
+	.  error
+
+
+state 26
+	expr : LET VAR EQUALS . expr IN expr  (9)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 37
+
+
+state 27
+	expr : LPAR expr RPAR .  (8)
+
+	.  reduce 8
+
+
+state 28
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr BIN_MULT expr .  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	.  reduce 11
+
+
+state 29
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr BIN_PLUS expr .  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	EOF  reduce 10
+	BIN_PLUS  reduce 10
+	BIN_CMP  reduce 10
+	EQUALS  reduce 10
+	COMMA  reduce 10
+	AND  reduce 10
+	OR  reduce 10
+	IN  reduce 10
+	RPAR  reduce 10
+
+
+state 30
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr BIN_CMP expr .  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	EOF  reduce 13
+	BIN_CMP  reduce 13
+	EQUALS  reduce 13
+	COMMA  reduce 13
+	AND  reduce 13
+	OR  reduce 13
+	IN  reduce 13
+	RPAR  reduce 13
+
+
+state 31
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr EQUALS expr .  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	EOF  reduce 14
+	BIN_CMP  reduce 14
+	EQUALS  reduce 14
+	COMMA  reduce 14
+	AND  reduce 14
+	OR  reduce 14
+	IN  reduce 14
+	RPAR  reduce 14
+
+
+state 32
+	expr : expr . COMMA expr  (5)
+	expr : expr COMMA expr .  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	AND  shift 23
+	OR  shift 24
+	EOF  reduce 5
+	COMMA  reduce 5
+	IN  reduce 5
+	RPAR  reduce 5
+
+
+state 33
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr AND expr .  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	EOF  reduce 15
+	COMMA  reduce 15
+	AND  reduce 15
+	OR  reduce 15
+	IN  reduce 15
+	RPAR  reduce 15
+
+
+state 34
+	expr : expr . COMMA expr  (5)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+	expr : expr OR expr .  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	AND  shift 23
+	EOF  reduce 16
+	COMMA  reduce 16
+	OR  reduce 16
+	IN  reduce 16
+	RPAR  reduce 16
+
+
+state 35
+	expr : expr COMMA . expr  (5)
+	expr : VAR LPAR expr COMMA . RPAR  (6)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	RPAR  shift 38
+	.  error
+
+	expr  goto 32
+
+
+state 36
+	expr : VAR LPAR expr RPAR .  (7)
+
+	.  reduce 7
+
+
+state 37
+	expr : expr . COMMA expr  (5)
+	expr : LET VAR EQUALS expr . IN expr  (9)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	COMMA  shift 22
+	AND  shift 23
+	OR  shift 24
+	IN  shift 39
+	.  error
+
+
+state 38
+	expr : VAR LPAR expr COMMA RPAR .  (6)
+
+	.  reduce 6
+
+
+state 39
+	expr : LET VAR EQUALS expr IN . expr  (9)
+
+	VAR  shift 3
+	STRING  shift 4
+	INT  shift 5
+	BIN_PLUS  shift 6
+	NOT  shift 7
+	LET  shift 8
+	LPAR  shift 9
+	.  error
+
+	expr  goto 40
+
+
+state 40
+	expr : expr . COMMA expr  (5)
+	expr : LET VAR EQUALS expr IN expr .  (9)
+	expr : expr . BIN_PLUS expr  (10)
+	expr : expr . BIN_MULT expr  (11)
+	expr : expr . BIN_CMP expr  (13)
+	expr : expr . EQUALS expr  (14)
+	expr : expr . AND expr  (15)
+	expr : expr . OR expr  (16)
+
+	BIN_MULT  shift 18
+	BIN_PLUS  shift 19
+	BIN_CMP  shift 20
+	EQUALS  shift 21
+	AND  shift 23
+	OR  shift 24
+	EOF  reduce 9
+	COMMA  reduce 9
+	IN  reduce 9
+	RPAR  reduce 9
+
+
+20 terminals, 4 nonterminals
+19 grammar rules, 41 states

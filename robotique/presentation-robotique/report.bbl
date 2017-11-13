@@ -1,0 +1,43 @@
+\begin{thebibliography}{1}
+
+\bibitem{hinton2012improving}
+Geoffrey~E Hinton, Nitish Srivastava, Alex Krizhevsky, Ilya Sutskever, and
+  Ruslan~R Salakhutdinov.
+\newblock Improving neural networks by preventing co-adaptation of feature
+  detectors.
+\newblock {\em arXiv preprint arXiv:1207.0580}, 2012.
+
+\bibitem{hoerzer2014emergence}
+Gregor~M Hoerzer, Robert Legenstein, and Wolfgang Maass.
+\newblock Emergence of complex computational structures from chaotic neural
+  networks through reward-modulated hebbian learning.
+\newblock {\em Cerebral cortex}, 24(3):677--690, 2014.
+
+\bibitem{huh2009real}
+Dongsung Huh and Emanuel Todorov.
+\newblock Real-time motor control using recurrent neural networks.
+\newblock In {\em Adaptive Dynamic Programming and Reinforcement Learning,
+  2009. ADPRL'09. IEEE Symposium on}, pages 42--49. IEEE, 2009.
+
+\bibitem{NIPS2015_5764}
+Igor Mordatch, Kendall Lowrey, Galen Andrew, Zoran Popovic, and Emanuel~V.
+  Todorov.
+\newblock Interactive control of diverse complex characters with neural
+  networks.
+\newblock In C.~Cortes, N.~D. Lawrence, D.~D. Lee, M.~Sugiyama, and R.~Garnett,
+  editors, {\em Advances in Neural Information Processing Systems 28}, pages
+  3132--3140. Curran Associates, Inc., 2015.
+
+\bibitem{mordatch2012discovery}
+Igor Mordatch, Emanuel Todorov, and Zoran Popovi{\'c}.
+\newblock Discovery of complex behaviors through contact-invariant
+  optimization.
+\newblock {\em ACM Transactions on Graphics (TOG)}, 31(4):43, 2012.
+
+\bibitem{wang2010optimizing}
+Jack~M Wang, David~J Fleet, and Aaron Hertzmann.
+\newblock Optimizing walking controllers for uncertain inputs and environments.
+\newblock In {\em ACM Transactions on Graphics (TOG)}, volume~29, page~73. ACM,
+  2010.
+
+\end{thebibliography}

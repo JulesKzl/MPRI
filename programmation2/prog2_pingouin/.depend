@@ -1,0 +1,14 @@
+bitset.cmo : bitset.cmi
+bitset.cmx : bitset.cmi
+hex.cmo : hex.cmi
+hex.cmx : hex.cmi
+main.cmo : paths.cmi hex.cmi
+main.cmx : paths.cmx hex.cmx
+paths.cmo : priority.cmi hex.cmi bitset.cmi paths.cmi
+paths.cmx : priority.cmx hex.cmx bitset.cmx paths.cmi
+priority.cmo : priority.cmi
+priority.cmx : priority.cmi
+bitset.cmi :
+hex.cmi :
+paths.cmi : hex.cmi bitset.cmi
+priority.cmi :

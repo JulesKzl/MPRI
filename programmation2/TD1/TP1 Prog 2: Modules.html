@@ -1,0 +1,193 @@
+<!--?xml version="1.0"?-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+  <meta content="text/html; charset=windows-1252" http-equiv="content-type">
+  <link href="TP1%20Prog%202:%20Modules_files/style.css" type="text/css" rel="stylesheet">
+
+  <link href="TP1%20Prog%202:%20Modules_files/xcode.css" type="text/css" rel="stylesheet">
+  <script src="TP1%20Prog%202:%20Modules_files/highlight.js"></script>
+  <script src="TP1%20Prog%202:%20Modules_files/jquery-1.js"></script>
+  <script><!--
+  $(document).ready(function() {
+    $('pre').each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+    $('code').each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+  });
+  --></script>
+
+  <title>TP1 Prog 2: Modules</title>
+</head>
+<body>
+  <div id="menu">
+   <ul>
+     <li><a href="http://www.pps.univ-paris-diderot.fr/%7Egc/teachAdvancedProgramming.en.html">Page du cours</a></li>
+     <li><a href="http://www.lsv.ens-cachan.fr/%7Ebaelde/prog2">Page des TPs</a></li>
+     <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml-400/">Doc OCaml 4.00</a></li>
+     <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml-400/libref/index_modules.html">API Ocaml 4.00</a></li>
+   </ul>
+  </div>
+  <div id="main">
+    
+<!--
+NOTES(2015)
+  il va vraiment falloir reformuler la question 4
+  pourquoi pas un bug à trouver dans un programme simple (calcul
+  de pt fixe?) manipulant des ensembles, et utilisant l'égalité (=)
+  sur Set.t?
+
+NOTES (2014)
+  en deux séances le TP est fini et je leur ai donné printf pour les occuper
+  exo 1: Int et String manquants ou avec champs manquants
+         fold rend la question 4 bancale
+  exo 2: .depend ne dépend pas des sources dans le Makefile
+  
+NOTES (2013)
+  la question 4 pourrait redevenir un bonus, et le fold la rend
+    un poil bancale
+-->
+<h2>Programmation Avancée</h2>
+<h1>TP1: Modules</h1>
+<h2>Exercice 1: Conteneurs</h2>
+<p>
+On considère la signature suivante, définissant des conteneurs (<code class="hljs ocaml"><span class="hljs-keyword">type</span> t</code>)
+pour un certain type d'éléments (<code class="hljs ocaml"><span class="hljs-keyword">type</span> elt</code>).
+</p>
+<pre class="syntax hljs ocaml"><span class="hljs-keyword">module</span> <span class="hljs-keyword">type</span> <span class="hljs-type">Container</span> = <span class="hljs-keyword">sig</span>
+  <span class="hljs-keyword">type</span> t
+  <span class="hljs-keyword">type</span> elt
+  <span class="hljs-keyword">val</span> empty  : t
+  <span class="hljs-keyword">val</span> add    : elt -&gt; t -&gt; t
+  <span class="hljs-keyword">val</span> merge  : t -&gt; t -&gt; t
+  <span class="hljs-keyword">val</span> member : elt -&gt; t -&gt; <span class="hljs-built_in">bool</span>
+  <span class="hljs-keyword">val</span> fold   : (<span class="hljs-symbol">'a</span> -&gt; elt -&gt; <span class="hljs-symbol">'a</span>) -&gt; <span class="hljs-symbol">'a</span> -&gt; t -&gt; <span class="hljs-symbol">'a</span>
+<span class="hljs-keyword">end</span>
+</pre>
+<p>
+La spécification informelle sera que <code class="hljs">t</code> se comporte comme un multi-ensemble,
+<code class="hljs">empty</code> étant le multi-ensemble vide, <code class="hljs">add</code> l'ajout d'un élément et <code class="hljs">merge</code>
+la fusion de deux multi-ensembles. La fonction <code class="hljs">fold</code> doit réaliser une itération
+sur tous les éléments d'un multi-ensemble, dans un ordre non spécifié.
+Par exemple, <code class="hljs">fold f x0 {e1,e2,e3} = f (f (f x0 e3) e2) e1</code>.
+</p>
+<h3>Question 1</h3>
+<p>
+Définissez une implémentation du type <code class="hljs">Container</code> par des listes.
+Dans ce cas on n'aura besoin d'aucune opération spécifique sur le type
+des éléments: on réalisera donc notre implémentation comme un foncteur
+<code class="hljs">LContainer</code> de <code class="hljs">AnyT</code> vers <code class="hljs">Container</code> avec la déclaration
+</p>
+<pre class="syntax hljs ocaml"><span class="hljs-keyword">module</span> <span class="hljs-keyword">type</span> <span class="hljs-type">AnyT</span> = <span class="hljs-keyword">sig</span>
+  <span class="hljs-keyword">type</span> t
+<span class="hljs-keyword">end</span>
+</pre>
+<h3>Question 2</h3>
+<p>
+Définir une implémentation par des listes triées, et exploiter l'ordre
+pour tester l'appartenance. Comme on a besoin d'un ordre sur le type
+<code class="hljs">elt</code>, on va cette fois écrire un foncteur <code class="hljs">SLContainer</code> de
+<code class="hljs">Set.OrderedType</code> (cf. <a href="http://caml.inria.fr/pub/docs/manual-ocaml-312/libref/Set.OrderedType.html" target="_blank">bibliothèque standard</a>) vers <code class="hljs">Container</code>.
+</p>
+<p>
+Testez vos deux implémentations, au moins avec le code suivant:
+</p>
+<pre class="syntax hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-literal">()</span> =
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">module</span> <span class="hljs-type">Test</span> (<span class="hljs-type">M</span>:<span class="hljs-type">Container</span> <span class="hljs-keyword">with</span> <span class="hljs-keyword">type</span> elt = <span class="hljs-built_in">int</span>) =
+    <span class="hljs-keyword">struct</span>
+      <span class="hljs-keyword">open</span> <span class="hljs-type">M</span>
+      <span class="hljs-keyword">let</span> <span class="hljs-literal">()</span> =
+        <span class="hljs-keyword">let</span> s = add <span class="hljs-number">42</span> (add <span class="hljs-number">16</span> (add <span class="hljs-number">64</span> empty)) <span class="hljs-keyword">in</span>
+        <span class="hljs-keyword">let</span> s = merge s s <span class="hljs-keyword">in</span>
+          <span class="hljs-keyword">assert</span> (member <span class="hljs-number">42</span> s) ;
+          <span class="hljs-keyword">assert</span> (member <span class="hljs-number">16</span> s) ;
+          <span class="hljs-keyword">assert</span> (member <span class="hljs-number">64</span> s) ;
+          <span class="hljs-type">Printf</span>.printf <span class="hljs-string">"Result: "</span> ;
+          fold (<span class="hljs-keyword">fun</span> <span class="hljs-literal">()</span> elt -&gt; <span class="hljs-type">Printf</span>.printf <span class="hljs-string">"%d+"</span> elt) <span class="hljs-literal">()</span> s ;
+          <span class="hljs-type">Printf</span>.printf <span class="hljs-string">"ø\n"</span>
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">in</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">module</span> <span class="hljs-type">A</span> = <span class="hljs-type">Test</span>(<span class="hljs-type">LContainer</span>(<span class="hljs-type">Int</span>)) <span class="hljs-keyword">in</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">module</span> <span class="hljs-type">B</span> = <span class="hljs-type">Test</span>(<span class="hljs-type">SLContainer</span>(<span class="hljs-type">Int</span>)) <span class="hljs-keyword">in</span>
+    <span class="hljs-literal">()</span>
+</pre>
+<h3>Dans la vraie vie</h3>
+<p>
+La première implémentation n'est pertinente en pratique que si
+on n'a pas d'ordre valable sous la main.
+La seconde implémentation est meilleure mais sous-optimale: on lui préfèrera
+des arbres binaires de recherche. En pratique, on utilisera souvent
+les modules <code class="hljs">Set</code>, <code class="hljs">Map</code> et <code class="hljs">Hashtbl</code> de la bibliothèque standard.
+</p>
+<h3>Question 3</h3>
+<p>
+On introduit une signature pour les types affichables:
+</p>
+<pre class="syntax hljs ocaml"><span class="hljs-keyword">module</span> <span class="hljs-keyword">type</span> <span class="hljs-type">Printable</span> = <span class="hljs-keyword">sig</span>
+  <span class="hljs-keyword">type</span> t
+  <span class="hljs-keyword">val</span> to_string : t -&gt; <span class="hljs-built_in">string</span>
+<span class="hljs-keyword">end</span>
+</pre>
+<p>
+Définir la signature <code class="hljs">PContainer</code> qui étend la signature <code class="hljs">Container</code>
+avec un champ <code class="hljs ocaml">to_string : t -&gt; <span class="hljs-built_in">string</span></code>.
+</p>
+<p>
+Définir un foncteur <code class="hljs">MakePrintable</code>
+qui, étant donnés un ensemble d'éléments affichables
+et une instance de <code class="hljs">Container</code> sur ces éléments, renvoie une instance
+de <code class="hljs">PContainer</code>.
+</p>
+<p>
+Tester sur le code suivant:
+</p>
+<pre class="syntax hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-literal">()</span> =
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">module</span> <span class="hljs-type">Test</span> (<span class="hljs-type">M</span>:<span class="hljs-type">PContainer</span> <span class="hljs-keyword">with</span> <span class="hljs-keyword">type</span> elt = <span class="hljs-built_in">string</span>) =
+    <span class="hljs-keyword">struct</span>
+      <span class="hljs-keyword">open</span> <span class="hljs-type">M</span>
+      <span class="hljs-keyword">let</span> <span class="hljs-literal">()</span> =
+        <span class="hljs-keyword">let</span> s =
+          add <span class="hljs-string">"d"</span> (merge (add <span class="hljs-string">"a"</span> empty) (add <span class="hljs-string">"c"</span> (add <span class="hljs-string">"b"</span> empty)))
+        <span class="hljs-keyword">in</span>
+          <span class="hljs-type">Printf</span>.printf <span class="hljs-string">"Result: %s\n"</span> (to_string s)
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">in</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">module</span> <span class="hljs-type">A</span> = <span class="hljs-type">Test</span>(<span class="hljs-type">MakePrintable</span>(<span class="hljs-type">String</span>)(<span class="hljs-type">LContainer</span>(<span class="hljs-type">String</span>))) <span class="hljs-keyword">in</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">module</span> <span class="hljs-type">B</span> = <span class="hljs-type">Test</span>(<span class="hljs-type">MakePrintable</span>(<span class="hljs-type">String</span>)(<span class="hljs-type">SLContainer</span>(<span class="hljs-type">String</span>))) <span class="hljs-keyword">in</span>
+    <span class="hljs-literal">()</span>
+</pre>
+<p>
+Ajouter un test où l'on construit, puis affiche un conteneur (non trié)
+de conteneurs (triés) de chaînes de caractères.
+On devra utiliser <code class="hljs">MakePrintable</code> deux fois, d'abord pour rendre les
+conteneurs de chaînes affichables, puis pour rendre les conteneurs
+de conteneurs affichables.
+</p>
+<h3>Question 4</h3>
+<p>
+Sur le papier, le système de modules garantit l'abstraction. Un foncteur
+qui reçoit en argument un module dont un type est abstrait ne pourra
+jamais accéder aux éléments de ce type autrement que par les fonctions
+fournies par le module. Il ne peut donc observer l'implémentation du type
+abstrait que par le biais des fonctions fournies explicitement.
+</p>
+<p>
+En pratique, cela n'est pas tout à fait vrai: la fonction d'égalité
+<code class="hljs ocaml">(=) : <span class="hljs-symbol">'a</span> -&gt; <span class="hljs-symbol">'a</span> -&gt; <span class="hljs-built_in">bool</span></code> permet de comparer des valeurs de tout type,
+y compris un type abstrait. (On notera que cette fonction ne peut être
+programmée en OCaml: elle est définie côté C dans le runtime
+du langage. Les fonctions polymorphes définissables dans le langage,
+comme par exemple <code class="hljs">List.mem</code>, ne brisent pas l'abstraction.)
+</p>
+<p>
+Etendre le premier foncteur <code class="hljs">Test</code> en utilisant l'égalité polymorphe
+pour tester si <code class="hljs">M:Container</code> est instantié par <code class="hljs">LContainer</code> ou <code class="hljs">SLContainer</code>.
+</p>
+<p>
+Pensez-vous que cela soit un problème en pratique?
+</p>
+  </div>
+
+
+</body></html>

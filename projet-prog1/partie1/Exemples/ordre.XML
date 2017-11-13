@@ -1,0 +1,2 @@
+<cprog><cfun name="main"><args><cdecl name="argc"/><cdecl name="argv"/></args><cblocks ><cdecl name="i"/><cdecl name="j"/><set_var name="j" ><op2 type="add" ><set_var name="i" ><cst value="3" /></set_var><set_var name="i" ><cst value="4" /></set_var></op2></set_var><call name="printf" ><str value="Valeur de j=%d (normalement 7), valeur de i=%d.
+" /></call><call name="fflush" ><var name="stdout" /></call><return><cst value="0" /></return></cblocks></cfun></cprog>

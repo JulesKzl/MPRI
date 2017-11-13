@@ -1,0 +1,48 @@
+# Tous les fichiers *.ml
+ML=$(wildcard *.ml)
+
+# Commandes pour compiler avec lwt
+COMPILE = ocamlfind ocamlopt \
+		  -syntax camlp4o -package lwt.unix,lwt.syntax,lambda-term
+LINK = $(COMPILE) -linkpkg
+
+#
+# === Début de la partie à modifier =============================
+#
+
+# Cibles à construire lors de l'invocation de "make"
+# sans cible spécifique.
+
+default: client server chat
+
+# Cibles spécifiques aux exécutables.
+# L'info utile à chaque fois est la liste des modules
+# à lier pour obtenir l'exécutable.
+
+client: client.cmx
+	$(LINK) $+ -o $@
+
+server: server.cmx
+	$(LINK) $+ -o $@
+
+chat: io.cmx chat.cmx
+	$(LINK) $+ -o $@
+
+#
+# === Fin de la partie à modifier ===============================
+#
+
+# Cibles génériques pour compiler les modules,
+# et calcul des dépendances entre modules.
+
+%.cmx: %.ml
+	ocamlfind ocamlopt \
+	  -syntax camlp4o -package lwt.unix,lwt.syntax,lambda-term \
+	  -c $<
+
+-include .depend
+.depend: $(ML)
+	ocamlfind ocamldep -syntax camlp4o -package lwt.syntax $(ML) > .depend
+
+clean:
+	rm -f *.cm* *.o

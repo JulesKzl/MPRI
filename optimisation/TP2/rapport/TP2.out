@@ -1,0 +1,11 @@
+\BOOKMARK [1][-]{section.1}{Optimisation sous contraintes \351galit\351s - Lagrangien augment\351}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Solution analytique du probl\350me}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{R\351solution num\351rique}{section.1}% 3
+\BOOKMARK [1][-]{section.2}{Probl\350me d'\351lasticit\351 en contact. Algorithme d'Uzawa}{}% 4
+\BOOKMARK [2][-]{subsection.2.1}{f=0}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.2}{f=-100}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{Conformation atomique d'une nano-particule et potentiel de Lennard-Jones}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{R\351solution analytique et num\351rique N=4}{section.3}% 8
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Solution th\351orique}{subsection.3.1}% 9
+\BOOKMARK [3][-]{subsubsection.3.1.2}{R\351solution num\351rique}{subsection.3.1}% 10
+\BOOKMARK [2][-]{subsection.3.2}{R\351solution num\351rique pour N=13}{section.3}% 11

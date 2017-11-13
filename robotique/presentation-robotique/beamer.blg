@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: beamer.aux
+The style file: plain.bst
+Database file #1: biblio.bib
+Warning--can't use both volume and number fields in wang2010optimizing
+You've used 5 entries,
+            2118 wiz_defined-function locations,
+            530 strings with 5009 characters,
+and the built_in function-call counts, 1843 in all, are:
+= -- 179
+> -- 95
+< -- 3
++ -- 37
+- -- 32
+* -- 134
+:= -- 309
+add.period$ -- 17
+call.type$ -- 5
+change.case$ -- 31
+chr.to.int$ -- 0
+cite$ -- 6
+duplicate$ -- 72
+empty$ -- 136
+format.name$ -- 32
+if$ -- 388
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 5
+newline$ -- 28
+num.names$ -- 10
+pop$ -- 32
+preamble$ -- 1
+purify$ -- 26
+quote$ -- 0
+skip$ -- 49
+stack$ -- 0
+substring$ -- 84
+swap$ -- 21
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 20
+warning$ -- 1
+while$ -- 17
+width$ -- 6
+write$ -- 59
+(There was 1 warning)

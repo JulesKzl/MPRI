@@ -1,0 +1,857 @@
+        OCaml version 4.01.0
+
+let run m = match m with;;
+# Characters 24-26:
+  let run m = match m with;;
+                          ^^
+Error: Syntax error
+# let run m = match m with 
+    | Val x -> x
+    | Exn x -> x;;
+    Characters 32-35:
+      | Val x -> x
+        ^^^
+Error: Unbound constructor Val
+# let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x;;
+    Characters 32-35:
+      | Val x -> x
+        ^^^
+Error: Unbound constructor Val
+# module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end;;
+                          Characters 13-16:
+  module Exn : EXN = struct 
+               ^^^
+Error: Unbound module type EXN
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exception : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end;;
+                                                    module type MONAD =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+  end
+module type EXN =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val throw : exn -> 'a t
+    val try_with : 'a t -> (exn -> 'a t) -> 'a t
+    val run : 'a t -> 'a
+  end
+module Exception : EXN
+# let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m);;
+                    Characters 26-29:
+    let module M = Exn in
+                   ^^^
+Error: Unbound module Exn
+# let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m);;
+                    Characters 26-29:
+    let module M = Exn in
+                   ^^^
+Error: Unbound module Exn
+# let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m);;
+                    Characters 26-29:
+    let module M = Exn in
+                   ^^^
+Error: Unbound module Exn
+# let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m);;
+                    Characters 26-29:
+    let module M = Exn in
+                   ^^^
+Error: Unbound module Exn
+# let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m);;
+                    Characters 26-29:
+    let module M = Exn in
+                   ^^^
+Error: Unbound module Exn
+# module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end;;
+                          module Exn : EXN
+# let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m);;
+                    Test exn: 42
+# module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end;;
+      module type CONT =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val run : unit t -> unit
+  end
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = 
+
+  let run m =
+end;;
+                                                                                                            Characters 1101-1104:
+Error: Syntax error
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()));;
+                                                                                                                      Test exn: 42
+Test cont: 42
+module type MONAD =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+  end
+module type EXN =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val throw : exn -> 'a t
+    val try_with : 'a t -> (exn -> 'a t) -> 'a t
+    val run : 'a t -> 'a
+  end
+module Exn : EXN
+module type CONT =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val run : unit t -> unit
+  end
+module Cont : CONT
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()));;
+                                                                                                                      Test exn: 42
+Test cont: 42
+module type MONAD =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+  end
+module type EXN =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val throw : exn -> 'a t
+    val try_with : 'a t -> (exn -> 'a t) -> 'a t
+    val run : 'a t -> 'a
+  end
+module Exn : EXN
+module type CONT =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val run : unit t -> unit
+  end
+module Cont : CONT
+# let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()));;
+        Test cont: 42
+# let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()));;
+        Test cont: 42
+# let rec iter g l = match l with 
+  | [] -> Cont.return () 
+  | x::suite -> Cont.bind (g x) (fun () -> (iter g suite));;
+    val iter : ('a -> unit Cont.t) -> 'a list -> unit Cont.t = <fun>
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()))
+
+
+let rec iter g l = match l with 
+  | [] -> Cont.return () 
+  | x::suite -> Cont.bind (g x) (fun () -> (iter g suite))
+
+let print_liste' x = Cont.return (print_int x)
+
+iter print_liste' [1;2;3];;
+                                                                                                                                        Characters 1473-1484:
+Error: This function has type 'a -> 'a Cont.t
+       It is applied to too many arguments; maybe you forgot a `;'.
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()))
+
+
+let rec iter g l = match l with 
+  | [] -> Cont.return () 
+  | x::suite -> Cont.bind (g x) (fun () -> (iter g suite))
+
+let print_liste' x = Cont.return (print_int x)
+
+let () = iter print_liste' [1;2;3];;
+                                                                                                                                        Characters 1509-1534:
+Error: This expression has type unit Cont.t
+       but an expression was expected of type unit
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()))
+
+
+let rec iter g l = match l with 
+  | [] -> Cont.return () 
+  | x::suite -> Cont.run (Cont.bind (g x) (fun () -> (iter g suite)))
+
+let print_liste' x = Cont.return (print_int x)
+
+let () = iter print_liste' [1;2;3];;
+                                                                                                                                        Characters 1408-1461:
+Error: This expression has type unit but an expression was expected of type
+         unit Cont.t
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()))
+
+
+let rec iter g l = match l with 
+  | [] -> Cont.return () 
+  | x::suite -> Cont.bind (g x) (fun () -> (iter g suite))
+
+let print_liste' x = Cont.return (print_int x)
+
+let () = Cont.run (iter print_liste' [1;2;3]);;
+                                                                                                                                        Test exn: 42
+Test cont: 42
+123module type MONAD =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+  end
+module type EXN =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val throw : exn -> 'a t
+    val try_with : 'a t -> (exn -> 'a t) -> 'a t
+    val run : 'a t -> 'a
+  end
+module Exn : EXN
+module type CONT =
+  sig
+    type +'a t
+    val return : 'a -> 'a t
+    val bind : 'a t -> ('a -> 'b t) -> 'b t
+    val run : unit t -> unit
+  end
+module Cont : CONT
+val iter : ('a -> unit Cont.t) -> 'a list -> unit Cont.t = <fun>
+val print_liste' : int -> unit Cont.t = <fun>
+# let () = Cont.run (iter print_liste' [1;2;3]);;
+123# let print_liste' x = Cont.return (print_int x)
+
+Cont.run (iter print_liste' [1;2;3]);;
+    Characters 21-32:
+  let print_liste' x = Cont.return (print_int x)
+                       ^^^^^^^^^^^
+Error: This function has type 'a -> 'a Cont.t
+       It is applied to too many arguments; maybe you forgot a `;'.
+# let ignore = Cont.run (iter print_liste' [1;2;3]);;
+123val ignore : unit = ()
+# let () = ignore (Cont.run (iter print_liste' [1;2;3]));;
+Characters 9-15:
+  let () = ignore (Cont.run (iter print_liste' [1;2;3]));;
+           ^^^^^^
+Error: This expression has type unit
+       This is not a function; it cannot be applied.
+# let () = iter print_liste' [1;2;3];;
+Characters 9-34:
+  let () = iter print_liste' [1;2;3];;
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+Error: This expression has type unit Cont.t
+       but an expression was expected of type unit
+# module type MONAD = sig
+  type +'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end
+
+module type EXN = sig
+  include MONAD
+  val throw : exn -> 'a t
+  val try_with : 'a t -> (exn -> 'a t) -> 'a t
+  val run : 'a t -> 'a   (* peut lever une exception *)
+end
+
+module Exn : EXN = struct 
+  type 'a t = Val of 'a | Exn of exn 
+  let return x = Val x 
+  let throw x = Exn x 
+  let bind m f = match m with 
+    | Val x -> f x
+    | Exn x -> Exn x 
+  let try_with m f = match m with 
+    | Val x -> Val x 
+    | Exn x -> f x 
+  let run m = match m with 
+    | Val x -> x
+    | Exn x -> raise x
+end 
+
+let () =
+  let module M = Exn in
+  let m =
+    M.try_with
+      (M.throw (Failure "normal"))
+      (fun _ ->
+         M.try_with
+           (M.return 42)
+           (fun _ -> M.throw (Failure "pas normal")))
+  in
+    Printf.printf "Test exn: %d\n" (M.run m)
+
+
+
+module type CONT = sig
+  include MONAD
+  val run : unit t -> unit
+end
+
+module Cont : CONT = struct 
+  type 'a cont = 'a -> unit
+  type 'a t = 'a cont -> unit 
+  let return x = fun k -> k x 
+  let bind m f = fun k -> m (fun x -> f x k)
+  let run m = m (fun x -> ())
+end 
+
+let () =
+  let m = Cont.bind (Cont.return 21) (fun x -> Cont.return (2*x)) in
+    Cont.run
+      (Cont.bind m
+         (fun x -> Printf.printf "Test cont: %d\n" x ; Cont.return ()))
+
+
+let rec iter g l = match l with 
+  | [] -> Cont.return () 
+  | x::suite -> Cont.bind (g x) (fun () -> (iter g suite))
+
+let print_liste' x = Cont.return (print_int x)
+
+let () = iter print_liste' [1;2;3];;
+                                                                                                                                        Characters 1509-1534:
+Error: This expression has type unit Cont.t
+       but an expression was expected of type unit
+# Cont.run (iter print_liste' [1;2;3])
+;;
+  123- : unit = ()
+# let print_liste' x = Cont.return ((print_int x; print_string " "));;
+val print_liste' : int -> unit Cont.t = <fun>
+# Cont.run (iter print_liste' [1;2;3])
+;;
+  1 2 3 - : unit = ()
+# 

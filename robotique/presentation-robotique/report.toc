@@ -1,0 +1,34 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Introduction}{1}
+\contentsline {subsection}{\numberline {1.1}Contexte}{1}
+\contentsline {subsection}{\numberline {1.2}Objectif de l'article}{2}
+\contentsline {section}{\numberline {2}Principe global}{2}
+\contentsline {subsection}{\numberline {2.1}D\IeC {\'e}finitions}{2}
+\contentsline {paragraph}{Etat de l'entit\IeC {\'e}}{2}
+\contentsline {paragraph}{Trajectoire}{2}
+\contentsline {paragraph}{Politique issue du r\IeC {\'e}seau de neurones\\}{2}
+\contentsline {subsection}{\numberline {2.2}Description du probl\IeC {\`e}me}{2}
+\contentsline {subsection}{\numberline {2.3}Trajectoire bruit\IeC {\'e}e}{3}
+\contentsline {subsubsection}{\numberline {2.3.1}L'int\IeC {\'e}r\IeC {\^e}t du bruit}{3}
+\contentsline {subsubsection}{\numberline {2.3.2}L'ajout du bruit}{3}
+\contentsline {subsection}{\numberline {2.4}Algorithme}{3}
+\contentsline {section}{\numberline {3}Optimisation de trajectoire}{4}
+\contentsline {subsection}{\numberline {3.1}V\IeC {\'e}rifier les \IeC {\'e}quations de la dynamique}{4}
+\contentsline {paragraph}{}{4}
+\contentsline {subsection}{\numberline {3.2}Calcul de la trajectoire optimale}{4}
+\contentsline {subsubsection}{\numberline {3.2.1}D\IeC {\'e}finition du co\IeC {\^u}t total}{4}
+\contentsline {paragraph}{}{4}
+\contentsline {subsubsection}{\numberline {3.2.2}M\IeC {\'e}thode de Quasi-Newton}{4}
+\contentsline {subsection}{\numberline {3.3}Calcul de la trajectoire optimale bruit\IeC {\'e}e}{5}
+\contentsline {subsubsection}{\numberline {3.3.1}Calcul de la matrice de feedback optimale $a_{s}$}{5}
+\contentsline {subsubsection}{\numberline {3.3.2}Calcul du gradient $\mathaccentV {tilde}07E{X}_{\mathaccentV {bar}016{s}}$}{5}
+\contentsline {section}{\numberline {4}Entrainement du r\IeC {\'e}seau de neurones}{5}
+\contentsline {subsection}{\numberline {4.1}Utilisation du r\IeC {\'e}seau de neurones}{5}
+\contentsline {paragraph}{}{5}
+\contentsline {paragraph}{}{5}
+\contentsline {subsection}{\numberline {4.2}Param\IeC {\`e}tres du r\IeC {\'e}seau de neurones}{5}
+\contentsline {section}{\numberline {5}Ex\IeC {\'e}cution de la politique}{6}
+\contentsline {section}{\numberline {6}R\IeC {\'e}sultats}{6}
+\contentsline {section}{\numberline {7}Conclusion}{6}
+\contentsline {paragraph}{}{6}
+\contentsline {paragraph}{}{6}
